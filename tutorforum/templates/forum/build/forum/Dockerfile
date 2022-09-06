@@ -8,10 +8,7 @@ RUN apt update && \
 
 # Install dockerize to wait for mongodb/elasticsearch availability
 ARG DOCKERIZE_VERSION=v0.16.0
-RUN dockerize_url="https://github.com/powerman/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-$(uname -m | sed 's@aarch@arm@')" \
-    && echo "Downloading dockerize from $dockerize_url" \
-    && curl --fail --location --output /usr/local/bin/dockerize $dockerize_url \
-    && chmod a+x /usr/local/bin/dockerize
+RUN wget -O /usr/local/bin https://github.com/powerman/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-arm64 
 
 # Create unprivileged "app" user
 RUN useradd --home-dir /app --create-home --shell /bin/bash --uid 1000 app
