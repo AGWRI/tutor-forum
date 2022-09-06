@@ -4,11 +4,14 @@ MAINTAINER Overhang.IO <contact@overhang.io>
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
   apt upgrade -y && \
-  apt install -y git wget autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm-dev
+  apt install -y git wget curl autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm-dev
 
 # Install dockerize to wait for mongodb/elasticsearch availability
 ARG DOCKERIZE_VERSION=v0.16.0
-RUN wget -O /usr/local/bin https://github.com/powerman/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-arm64 
+RUN dockerize_url="https://github.com/powerman/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-arm64" \
+    && echo "Downloading dockerize from $dockerize_url" \
+    && curl --fail --location --output /usr/local/bin/dockerize $dockerize_url \
+    && chmod a+x /usr/local/bin/dockerize
 
 # Create unprivileged "app" user
 RUN useradd --home-dir /app --create-home --shell /bin/bash --uid 1000 app
