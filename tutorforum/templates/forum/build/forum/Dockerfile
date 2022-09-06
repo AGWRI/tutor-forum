@@ -7,10 +7,11 @@ RUN apt update && \
   apt install -y git wget autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm-dev
 
 # Install dockerize to wait for mongodb/elasticsearch availability
-ARG DOCKERIZE_VERSION=v0.6.1
-RUN wget -O /tmp/dockerize.tar.gz https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && tar -C /usr/local/bin -xzvf /tmp/dockerize.tar.gz \
-    && rm /tmp/dockerize.tar.gz
+ARG DOCKERIZE_VERSION=v0.16.0
+RUN dockerize_url="https://github.com/powerman/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-$(uname -m | sed 's@aarch@arm@')" \
+    && echo "Downloading dockerize from $dockerize_url" \
+    && curl --fail --location --output /usr/local/bin/dockerize $dockerize_url \
+    && chmod a+x /usr/local/bin/dockerize
 
 # Create unprivileged "app" user
 RUN useradd --home-dir /app --create-home --shell /bin/bash --uid 1000 app
